@@ -71,7 +71,7 @@ class httpClient
             that.http.setRequestHeader("content-type","application/json");
             that.http.onload = function()
             {
-                if (that.http.status == 200)
+                if (that.http.status == 201)
                     {
                         
                         resolve(that.http.response);

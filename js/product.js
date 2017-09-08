@@ -11,28 +11,37 @@ class Product{
     search(str)
     {
         this.request = new httpClient(this.url);
-        this.request.search(null,str).then(function(response)
+        this.request.search(str).then(function(response)
         {
-                response = JSON.parse(response);
-            document.getElementsByClassName('list')[0].childNodes[1].innerHTML = "";
-           
+            
+            if(response.length ==0)
+                document.getElementsByClassName('thirdrow')[0].innerHTML = "<h1> No items </h1>";
+            else
+                document.getElementsByClassName('thirdrow')[0].innerHTML = "";
+             var i;
+
             for (i=0;i<response.length;i++)
                 {
-                    var alt = (Math.floor((Math.random() * 10) + 1)%3==0?"alt-div":"");
+                    console.log(response[i]);
+             
                     var html = `<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 item">
                     <div class="container-fluid box">
                         <div class="row">
                             <div class="col-md-12 image">
-                                    <div class="btn btn-default price">$1200</div>  <img src="images/thumb.jpg"/>
+                                    <div class="btn btn-default price">$` + response[i].price + `</div>
+                                    <div class="btn btn-default delete close">Delete</div>
+                                    <div class="btn btn-primary edit"><span class="glyphicon glyphicon-edit"></span></div>
+                                    <input id="id" type="hidden" value="` + response[i].id +`"/>
+                                    <img src="images/pic.jpg"/>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 desc">
                                 <h4>
-                                    wcfwfwfwefwfewfwe
+                                    ` + response[i].desc + `
                                 </h4>
                                 <h6>
-                                     Tue 2017 ,19
+                                     `+ response[i].name +`
                                 </h6>
                             </div>
                         </div>
@@ -42,11 +51,12 @@ class Product{
                  
                 if (response[i].name != undefined)
                     {
-                        document.getElementsByClassName('list')[0].childNodes[1].innerHTML+=html;
-                    }  
+                        document.getElementsByClassName('thirdrow')[0].innerHTML+=html;
+                    }
+                     
                 }
-                if (response.length == 0)
-                    document.getElementsByClassName('list')[0].childNodes[1].innerHTML = "    <h1> No products available</h1>    ";
+               
+                
         });
     }
 
@@ -70,16 +80,16 @@ class Product{
                         <div class="row">
                             <div class="col-md-12 image">
                                     <div class="btn btn-default price">$` + response[i].price + `</div>
-                                    <div class="btn btn-default close">Delete</div>
+                                    <div class="btn btn-default delete close">Delete</div>
                                     <div class="btn btn-primary edit"><span class="glyphicon glyphicon-edit"></span></div>
                                     <input id="id" type="hidden" value="` + response[i].id +`"/>
-                                    <img src="images/thumb.jpg"/>
+                                    <img src="images/pic.jpg"/>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 desc">
                                 <h4>
-                                    ` + response[i].description + `
+                                    ` + response[i].desc + `
                                 </h4>
                                 <h6>
                                      `+ response[i].name +`
@@ -118,10 +128,11 @@ class Product{
     
     create(data)
     {
+        var that = this;
         this.request = new httpClient(this.url);
         this.request.post(data).then(function(response)
         {
-             window.location = "../index/index.html";
+           that.show_all();
         },function(response)
         {
             window.location = "../index/index.html";
@@ -130,23 +141,26 @@ class Product{
 
     edit(data,id)
     {
+        var that = this;
         this.request = new httpClient(this.url);
         this.request.put(data,id).then(function(response)
         {
-            window.location = "../index/index.html";
+            that.show_all();
         },function()
         {
-            window.location = "../index/index.html";
+            window.location = "index.html";
         }); 
+
+        
     }
 
     delete(id)
     {
         this.request = new httpClient(this.url);
-        
+        var that = this;
         this.request.deletedata(id).then(function(response)
         {
-           page.show_all();
+           that.show_all();
         },function(response)
         {
             console.log(response);
@@ -162,8 +176,8 @@ class Product{
             response = JSON.parse(response);
             console.log(response);
             $("form #inputName").val(response.name);
-            $("form #inputDescription").val(response.description);
-            $("form #inputCategory").val(response.category);
+            $("form #inputDescription").val(response.desc);
+            $("form #inputPrice").val(response.price);
         }); 
     }
 
